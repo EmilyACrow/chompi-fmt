@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import Chompi from './chompi.js';
-import Samples from './samples.js';
+import ReactDOM from 'react-dom/client';
+import './index.css';
 
 function App() {
     return (
         <div>
-            <div style={{ height: '50vh' }}>
+            <div style={{ width: '50vw' }}>
                 <Chompi />
-            </div>
-            <div style={{ height: '50vh' }}>
-                <Samples />
             </div>
         </div>
     );
@@ -20,4 +18,6 @@ export default App;
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+root.render(<StrictMode>
+                <App />
+            </StrictMode>);
