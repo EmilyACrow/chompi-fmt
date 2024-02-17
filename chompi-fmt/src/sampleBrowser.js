@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './sampleBrowser.css';
-import './chompi.css';
 
 function SampleCard(props) {
-    const {onClick, value} = props;
-    const className = "sample-card";
-    //const { backgroundColor, hoverColor } = getButtonColors(props.bank);
+    const {activeKey, onClick, value} = props;
+    let className = "sample-card";
+    const { bankColor, bankHover, activeColor, activeHover } = props.buttonColors;
     const [isHovered, setIsHovered] = React.useState(false);
 
     const handleMouseEnter = () => {
@@ -16,17 +15,13 @@ function SampleCard(props) {
         setIsHovered(false);
     };
 
-    // let divStyle = {
-    //     backgroundColor: isHovered ? hoverColor : backgroundColor,
-    // };
-
-    // if (value === activeKey) {
-    //     divStyle = {
-    //         backgroundColor: isHovered ? "#ccc" : "#fff"
-    //     }
-    // }
     let divStyle = {
-        backgroundColor: isHovered ? "#ccc" : "#fff"
+        backgroundColor: isHovered ? bankHover : bankColor,
+    };
+    if (value === activeKey) {
+        divStyle = {
+            backgroundColor: isHovered ? activeHover : activeColor,
+        }
     }
 
     return (
@@ -37,52 +32,43 @@ function SampleCard(props) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            {value}
+            {value + 1}
         </div>
     );
 }
 
-class SampleBrowser extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            samples: Array(2).fill("test"),
-            loadedSamples: Array(14).fill(null),
-            
-        };
-    }
+function SampleBrowser(props) {
+    const [samples, setSamples] = useState(Array(2).fill(null));
+    const {currentSample, setCurrentSample} = props;
+    const { getButtonColors, activeBank, activeKey } = props;
 
-    renderSampleCard(i) {
+    const handleClick = (i) => {
+        setCurrentSample(samples[i]);
+    };
+
+    const renderSampleCard = (i) => {
         return (
             <SampleCard
                 value={i}
-                onClick={() => this.handleClick(i)}
+                onClick={() => handleClick(i)}
+                buttonColors={getButtonColors()}
                 key={i}
             />
         );
-    }
+    };
 
-    renderSampleCards() {
-        let samples=this.state.samples;
-        for(let i=0; i<samples.length; i++){
-            samples[i]=this.renderSampleCard(i);
-        }
-        return samples;
-    }
-
-    handleClick(i) {
-        this.setState({
-            activeSample: this.state.samples[i],
+    const renderSampleCards = () => {
+        let renderedSamples = samples.map((sample, i) => {
+            return renderSampleCard(i);
         });
-    }
+        return renderedSamples;
+    };
 
-    render() {
-        return (
-            <div className="sample-browser">
-                {this.renderSampleCards()}
-            </div>
-        );
-    }
+    return (
+        <div className="sample-browser">
+            {renderSampleCards()}
+        </div>
+    );
 }
 
 export default SampleBrowser;
