@@ -1,5 +1,18 @@
 body {
     background: #222;
-    width: 100%;
+    width: 98%;
     height: 100%;
+}
+
+.app-container {
+    display: flex;
+}
+
+.chompi {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.browser {
+    flex: 1;
 }

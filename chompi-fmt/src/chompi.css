@@ -1,5 +1,16 @@
+.app-container {
+    display: flex;
+}
+
+.chompi-container {
+    flex: 1;
+    margin: 2vw;
+    height: 40vh;
+    position: sticky;
+    top: 30px;
+}
+
 .chompi {
-    color: #000;
     font-size: 1.5em;
     text-align: center;
     padding: 1em;
@@ -7,7 +18,7 @@
     border-radius: 5px;
     background-color: #cac;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    height: 40vh;
+    height: 100%;
 }
 
 .board {
@@ -24,14 +35,7 @@ ol, ul {
     padding-left: 30px;
 }
 
-.black-key {
-    background: #444;
-    float: left;
-    width: 34px;
-}
-
 .white-key {
-    background: #fff;
     transition: background 0.3s ease-in-out;
     border: 1px solid #999;
     border-radius: 6px;
@@ -39,26 +43,14 @@ ol, ul {
     font-size: 20px;
     line-height: 34px;
     width: 17%;
+    height: 0;
+    padding-bottom: 6%;
     margin-right: 3px;
     margin-top: 2px;
     padding: 2;
     text-align: center;
 }
 
-.white-key:hover {
-    background: #ddd;
-}
-
-.spacer-key {
-    float: left;
-    width: 34px;
-}
-
-
 .white-key:focus {
     outline: none;
-}
-
-.kbd-navigation .white-key:focus {
-    background: #ddd;
 }

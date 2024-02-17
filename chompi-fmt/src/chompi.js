@@ -1,12 +1,57 @@
 import React from 'react';
 import './chompi.css';
+import SampleBrowser from './sampleBrowser';
+
+
+function DynamicSquare(props) {
+    const {activeKey, onClick, value} = props;
+    let className = props.keyType + "-key";
+    const { backgroundColor, hoverColor } = getButtonColors(props.bank);
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+    };
+
+    let divStyle = {
+        backgroundColor: isHovered ? hoverColor : backgroundColor,
+    };
+
+    if (value === activeKey) {
+        divStyle = {
+            backgroundColor: isHovered ? "#ccc" : "#fff"
+        }
+    }
+
+    return (
+        <div
+            className={className}
+            style={divStyle}
+            onClick={onClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            {value + 1}
+        </div>
+    );
+}
 
 function Square(props) {
-    let className = props.keyType + "-key";
+    const className = props.keyType + "-key";
+    // const bankColor = props.bankColor;
+    // const bankHoverColor = props.bankHoverColor;
+    // const activeColor = props.activeColor;
+    // const activeKey = props.activeKey;
+    // let bgColor = prop.value === activeKey ? activeColor : bankColor;
     return (
         <button 
             className={className}
             onClick={props.onClick}
+            style={{backgroundColor:"#444"}}
         >
             {props.value + 1}
         </button>
@@ -14,13 +59,16 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-    renderSquare(i,keyType) {
+    renderSquare(props) {
+        const idx = props.idx;
         return (
-            <Square 
-                value={this.props.keys[i]}
-                keyType={keyType}
-                onClick={() => this.props.onClick(i)}
-                key={i}
+            <DynamicSquare 
+                value={idx}
+                keyType={props.keyType}
+                bank={this.props.bank}
+                activeKey={this.props.activeKey}
+                onClick={() => this.props.onClick(idx)}
+                key={idx}
             />
         )
     }
@@ -28,8 +76,7 @@ class Board extends React.Component {
     renderWhiteKeys() {
         let row=Array(14).fill(null);
         for(let i=0; i<14; i++){
-            console.log(i)
-            row[i]=this.renderSquare({i: i, keyType: "white"});
+            row[i]=this.renderSquare({idx: i, keyType: "white"});
         }
         return row;
     }
@@ -47,16 +94,16 @@ class Chompi extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            banks: [{
-                jammi: Array(3).fill(Array(14).fill(null)),
-                cubbi: Array(3).fill(Array(14).fill(null)),
-            }],
-            keys: Array(14).fill(null),
+            banks:  {
+                jammi: Array(3).fill(Array(14).fill("jammi")),
+                cubbi: Array(3).fill(Array(14).fill("cubbi")),
+            },
+            samples: props.loadedSamples,
             currentBank: 0,
             currentSampler: "jammi",
             initialBanks: this.getInitialBanks(),
-            activeKey: null,
             selectedSample: null,
+            activeKey: props.activeKey,
         }
     }
 
@@ -69,17 +116,19 @@ class Chompi extends React.Component {
     }
 
     handleSampleKeyClick(i) {
-        const keys = this.state.keys.slice();
-        let key = keys[i];
+        const samples = this.state.samples.slice();
+        let key = samples[i];
         if (this.state.activeKey && key === this.state.activeKey) {
             this.setState({
                 activeKey: null,
                 selectedSample: null,
             })
         } else {
+            console.log(this.state.banks[this.state.currentSampler][this.state.currentBank])
             this.setState({
-                activeKey: key,
-                selectedSample: this.state.banks[this.state.currentSampler][this.state.currentBank][key],
+                activeKey: i,
+                selectedSample: this.state.banks[this.state.currentSampler][this.state.currentBank][i],
+                currentBank: i % 3,
             })
         }
         
@@ -95,16 +144,43 @@ class Chompi extends React.Component {
         })
     }
 
-    render() {    
+    render() {
+        let activeSample = this.state.selectedSample;
 
         return (
-            <div className="chompi">
-                <Board 
-                    onClick = {i => this.handleSampleKeyClick(i)}
-                    keys = {this.state.keys}
-                />
+            <div className="chompi-container">
+                <div className="chompi">
+                    <Board 
+                        onClick = {i => this.handleSampleKeyClick(i)}
+                        keys = {this.state.keys}
+                        activeKey = {this.state.activeKey}
+                        bank = {this.state.currentBank}
+                    />
+                    <label>{activeSample}</label>
+                </div>
             </div>
         );
+    }
+}
+
+function getButtonColors(bank) {
+    let bgColor, hoverColor;
+    switch(bank) {
+        case 1:
+            bgColor = "#F6C95E";
+            hoverColor = "#CEA136";
+            break;
+        case 2:
+            bgColor = "#64BDCA";
+            hoverColor = "#3C95A2";
+            break;
+        default:
+            bgColor = "#A794C2";
+            hoverColor = "#7F6C9A";
+    }
+    return {
+        backgroundColor: bgColor,
+        hoverColor: hoverColor,
     }
 }
 
