@@ -1,0 +1,1 @@
+from ChompiBack import app

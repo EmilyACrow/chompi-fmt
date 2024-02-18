@@ -1,0 +1,1 @@
+FLASK_APP=chompi.py
