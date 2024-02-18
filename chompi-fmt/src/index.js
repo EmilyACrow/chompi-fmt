@@ -45,6 +45,7 @@ function Manager() {
     });
     const [bank, setBank] = useState(Array(14).fill(null));
     const [currentSample, setCurrentSample] = useState(null);
+    const [samples, setSamples] = useState(Array(0));
 
     const handleSetBank = (i) => {
         setActiveBank(i);
@@ -100,6 +101,8 @@ function Manager() {
                 className="browser"
                 activeBank={activeBank}
                 activeKey={activeKey}
+                samples={samples}
+                setSamples={setSamples}
                 currentSample={currentSample}
                 setCurrentSample={handleSetCurrentSample}
                 getBankColors={() => getBankColors(activeBank)}

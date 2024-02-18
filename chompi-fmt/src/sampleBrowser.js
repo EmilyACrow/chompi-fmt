@@ -1,6 +1,32 @@
 import React, { useState } from 'react';
 import './sampleBrowser.css';
 
+
+function FileBrowserButton(props) {
+    const { onFileChange } = props;
+
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        const validFiles = Array.from(files).filter((file) =>
+            file.name.endsWith('.wav')
+        );
+        onFileChange(validFiles);
+    };
+
+    return (
+        <div>
+            <input
+                type="file"
+                accept=".wav"
+                multiple
+                onChange={handleFileChange}
+            />
+        </div>
+    );
+}
+
+
+
 function SampleCard(props) {
     const {activeKey, onClick, value} = props;
     let className = "sample-card";
@@ -32,26 +58,29 @@ function SampleCard(props) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            {value + 1}
+            {value.slice(0,-4)} 
         </div>
     );
 }
 
 function SampleBrowser(props) {
-    const [samples, setSamples] = useState(Array(2).fill(null));
-    const {currentSample, setCurrentSample} = props;
-    const { getButtonColors, activeBank, activeKey } = props;
+    const {currentSample, setCurrentSample, samples, setSamples} = props;
+    const { getBankColors } = props;
 
-    const handleClick = (i) => {
+    const handleSampleClick = (i) => {
         setCurrentSample(samples[i]);
     };
+
+    const handleFileImportClick = (files) => {
+        setSamples([...samples, ...files]);
+    }
 
     const renderSampleCard = (i) => {
         return (
             <SampleCard
-                value={i}
-                onClick={() => handleClick(i)}
-                buttonColors={getButtonColors()}
+                value={samples[i].name}
+                onClick={() => handleSampleClick(i)}
+                buttonColors={getBankColors()}
                 key={i}
             />
         );
@@ -66,6 +95,9 @@ function SampleBrowser(props) {
 
     return (
         <div className="sample-browser">
+            <div className="file-browser-btn">
+                <FileBrowserButton onFileChange={handleFileImportClick} />
+            </div>
             {renderSampleCards()}
         </div>
     );
