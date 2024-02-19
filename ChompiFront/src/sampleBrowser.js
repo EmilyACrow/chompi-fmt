@@ -10,11 +10,12 @@ function FileBrowserButton(props) {
         const validFiles = Array.from(files).filter((file) =>
             file.name.endsWith('.wav')
         );
-        onFileChange(validFiles);
+
+        return onFileChange(validFiles);
     };
 
     return (
-        <div>
+        <div className="load-sample-btn">
             <input
                 type="file"
                 accept=".wav"

@@ -3,6 +3,7 @@ import Chompi from './chompi.js';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import SampleBrowser from './sampleBrowser.js';
+import axios from 'axios';
 
 function App() {
     return (
@@ -55,18 +56,6 @@ function Manager() {
         setActiveKey(i);
     };
 
-    const loadSampleToKey = (sample) => {
-        if (!activeKey) return;
-
-        let updatedBank = [...bank];
-        let updatedBanks = { ...banks };
-        updatedBank[activeKey] = sample;
-        updatedBanks[activeSampler][activeBank] = updatedBank;
-
-        setBanks(updatedBanks);
-        setBank(updatedBank);
-    };
-
     const handleSetSampler = (sampler) => {
         setActiveSampler(sampler);
     };
@@ -82,6 +71,32 @@ function Manager() {
             setBank(updatedBank);
             setBanks(updatedBanks);
         }
+    }
+
+    const handleSetSamples = (files) => {
+        const formData = new FormData();
+
+        files.forEach(file => {
+            formData.append(
+                "samples", file,
+            );
+        });
+
+        axios({
+            method: "POST",
+            url: "http://localhost:5000/load-samples",
+            data: formData,
+        })
+        .then((response) => {
+            const data= response.data;
+            console.log(data)
+        }).catch((error) => {
+            if (error.response) {
+                console.log(error.response)
+                console.log(error.response.status)
+                console.log(error.response.headers)
+            }
+        });
     }
 
     return (
@@ -102,7 +117,7 @@ function Manager() {
                 activeBank={activeBank}
                 activeKey={activeKey}
                 samples={samples}
-                setSamples={setSamples}
+                setSamples={handleSetSamples}
                 currentSample={currentSample}
                 setCurrentSample={handleSetCurrentSample}
                 getBankColors={() => getBankColors(activeBank)}
