@@ -37,7 +37,6 @@ ol, ul {
 
 .white-key {
     transition: background 0.3s ease-in-out;
-    border: 1px solid #999;
     border-radius: 6px;
     float: left;
     font-size: 20px;
@@ -49,8 +48,4 @@ ol, ul {
     margin-top: 2px;
     padding: 2;
     text-align: center;
-}
-
-.white-key:focus {
-    outline: none;
 }

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './sampleBrowser.css';
 
 
 function FileBrowserButton(props) {
     const { onFileChange } = props;
+    const inputFile = useRef(null);
 
     const handleFileChange = (event) => {
         const files = event.target.files;
@@ -14,25 +15,34 @@ function FileBrowserButton(props) {
         return onFileChange(validFiles);
     };
 
+    const handleClick = () => {
+        inputFile.current.click();
+    }
+
     return (
-        <div className="load-sample-btn">
+        <div 
+            className="load-sample-btn" 
+            onClick={handleClick}>
             <input
                 type="file"
                 accept=".wav"
                 multiple
+                ref={inputFile}
+                style={{display: 'none'}}
                 onChange={handleFileChange}
             />
+            Import Samples
         </div>
     );
 }
 
-
-
 function SampleCard(props) {
-    const {activeKey, onClick, value} = props;
-    let className = "sample-card";
+    const {currentSample, onClick, value, bank} = props;
     const { bankColor, bankHover, activeColor, activeHover } = props.buttonColors;
     const [isHovered, setIsHovered] = React.useState(false);
+    const className = "sample-card";
+    const defaultColor = "#fff";
+    const defaultHover = "#ddd";
 
     const handleMouseEnter = () => {
         setIsHovered(true);
@@ -42,13 +52,20 @@ function SampleCard(props) {
         setIsHovered(false);
     };
 
-    let divStyle = {
-        backgroundColor: isHovered ? bankHover : bankColor,
-    };
-    if (value === activeKey) {
+    let divStyle;
+
+    if (value === currentSample) {
         divStyle = {
             backgroundColor: isHovered ? activeHover : activeColor,
-        }
+        };
+    } else if (bank.includes(value)) {
+        divStyle = {
+            backgroundColor: isHovered ? bankHover : bankColor,
+        };
+    } else {
+        divStyle = {
+            backgroundColor: isHovered ? defaultHover : defaultColor,
+        };
     }
 
     return (
@@ -65,30 +82,32 @@ function SampleCard(props) {
 }
 
 function SampleBrowser(props) {
-    const {currentSample, setCurrentSample, samples, setSamples} = props;
+    const {currentSample, setCurrentSample, samples, loadSamples, bank} = props;
     const { getBankColors } = props;
 
     const handleSampleClick = (i) => {
-        setCurrentSample(samples[i]);
+        setCurrentSample(samples[currentSample]);
     };
 
     const handleFileImportClick = (files) => {
-        setSamples([...samples, ...files]);
+        loadSamples([...files]);
     }
 
     const renderSampleCard = (i) => {
         return (
             <SampleCard
-                value={samples[i].name}
+                value={i}
                 onClick={() => handleSampleClick(i)}
                 buttonColors={getBankColors()}
+                currentSample={currentSample}
+                bank={bank}
                 key={i}
             />
         );
     };
 
     const renderSampleCards = () => {
-        let renderedSamples = samples.map((sample, i) => {
+        let renderedSamples = samples.map((i) => {
             return renderSampleCard(i);
         });
         return renderedSamples;
@@ -99,7 +118,10 @@ function SampleBrowser(props) {
             <div className="file-browser-btn">
                 <FileBrowserButton onFileChange={handleFileImportClick} />
             </div>
-            {renderSampleCards()}
+            <div className='samples-container'>
+                {renderSampleCards()}
+            </div>
+            
         </div>
     );
 }

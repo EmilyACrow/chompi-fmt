@@ -88,7 +88,7 @@ function Chompi(props) {
             <div className="chompi">
                 <Board 
                     onClick={(i) => handleSampleKeyClick(i)}
-                    getButtonColors={() => getBankColors(activeBank)}
+                    getButtonColors={()=>getBankColors()}
                     activeKey={props.activeKey}
                     bank={props.activeBank}
                 />

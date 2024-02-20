@@ -46,7 +46,7 @@ function Manager() {
     });
     const [bank, setBank] = useState(Array(14).fill(null));
     const [currentSample, setCurrentSample] = useState(null);
-    const [samples, setSamples] = useState(Array(0));
+    const [samples, setSamples] = useState([]);
 
     const handleSetBank = (i) => {
         setActiveBank(i);
@@ -73,7 +73,7 @@ function Manager() {
         }
     }
 
-    const handleSetSamples = (files) => {
+    const handleUploadSamples = (files) => {
         const formData = new FormData();
 
         files.forEach(file => {
@@ -88,8 +88,17 @@ function Manager() {
             data: formData,
         })
         .then((response) => {
-            const data= response.data;
-            console.log(data)
+            const data= response.data; //Data is an array of sample names
+
+            if(Array.isArray(data)) {
+                let loadedSamples = data.filter((sample) => 
+                    (sample.status && sample.status === "success")
+                ).map((sample) => { return sample.filename });
+
+                setSamples([...samples, ...loadedSamples]);
+            } else {
+                console.log("Not an array")
+            }
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response)
@@ -110,14 +119,14 @@ function Manager() {
                 activeSampler={activeSampler}
                 setActiveSampler={handleSetSampler}
                 currentSample={currentSample}
-                getBankColors={getBankColors}
+                getBankColors={() => getBankColors(activeBank)}
             />
             <SampleBrowser
                 className="browser"
-                activeBank={activeBank}
+                bank={bank}
                 activeKey={activeKey}
                 samples={samples}
-                setSamples={handleSetSamples}
+                loadSamples={handleUploadSamples}
                 currentSample={currentSample}
                 setCurrentSample={handleSetCurrentSample}
                 getBankColors={() => getBankColors(activeBank)}
@@ -129,6 +138,20 @@ function Manager() {
 export default App;
 
 // ========================================
+
+// Reset the samples folder so that samples don't persist between sessions
+axios({
+    method: "POST",
+    url: "http://localhost:5000/delete-all-samples",
+}).then (
+    (response) => {
+        console.log(response.data)
+    }
+).catch(
+    (error) => {
+        console.log(error)
+    }
+)
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<StrictMode>

@@ -14,9 +14,8 @@ try:
 except OSError:
     pass
 try:
-    # os.makedirs(app.instance_path)
     os.makedirs(os.path.join(app.instance_path, 'samples'))
 except OSError as e:
-    print("Error:" + e)
+    print(e)
 
     
