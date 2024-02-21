@@ -50,12 +50,13 @@ ol, ul {
 }
 
 .bank-btn {
-    background-color: #f4f4f4;
     border-radius: 5px;
     padding: 5px;
     margin: 5px;
+    width: 18%;
     cursor: pointer;
     user-select: none;
+    flex: 1,
 }
 
 .sampler-btn {
@@ -67,15 +68,19 @@ ol, ul {
     user-select: none;
 }
 
-.bank-btns {
+.bank-btn-container {
     width: 100%;
+    display: flex;
+    justify-content: right;
 }
 
-.sampler-btns {
+.sampler-btn-container {
     width: 100%;
+    display: flex;
+    justify-content: right;
 }
 
-.sample-slots {
+.sample-slot-container {
     display: flex;
     flex-direction: row;
     align-items: center;

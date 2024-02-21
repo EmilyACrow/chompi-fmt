@@ -151,7 +151,7 @@ function Manager() {
                 activeSampler={activeSampler}
                 setActiveSampler={handleSetSampler}
                 currentSample={currentSample}
-                getBankColors={() => getBankColors(activeBank)}
+                getBankColors={getBankColors}
             />
             <SampleBrowser
                 className="browser"

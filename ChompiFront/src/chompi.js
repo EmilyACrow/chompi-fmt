@@ -2,9 +2,8 @@ import './chompi.css';
 import React, { useState } from 'react';
 
 
-function SampleSlot(props) {
-    const {activeKey, onClick, value} = props;
-    const className = "sample-slot";
+function DynamicSquare(props) {
+    const {isActive, onClick, value, className} = props;
     const { bankColor, bankHover, activeColor, activeHover } = props.buttonColors;
     const [isHovered, setIsHovered] = React.useState(false);
 
@@ -16,13 +15,16 @@ function SampleSlot(props) {
         setIsHovered(false);
     };
 
-    let divStyle = {
-        backgroundColor: isHovered ? bankHover : bankColor,
-    };
-    if (value === activeKey) {
+    let divStyle
+     
+    if (isActive) {
         divStyle = {
             backgroundColor: isHovered ? activeHover : activeColor,
         }
+    } else {
+        divStyle= {
+            backgroundColor: isHovered ? bankHover : bankColor,
+        };
     }
 
     return (
@@ -33,34 +35,23 @@ function SampleSlot(props) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            {value + 1}
+            {value}
         </div>
     );
 }
 
 function Board(props) {
-    const buttonColors = props.getButtonColors();
+    const buttonColors = props.getButtonColors(props.bank);
     const renderSampleSlot = (idx) => {
         return (
-            <SampleSlot 
-                value={idx}
-                activeKey={props.activeKey}
-                bank={props.bank}
+            <DynamicSquare 
+                value={idx + 1}
+                className="sample-slot"
+                isActive={props.activeKey === idx}
                 onClick={() => props.onSampleSlotClick(idx)}
                 buttonColors={buttonColors}
-                key={idx}
+                key={"slot" + idx}
             />
-        )
-    }
-
-    const renderBankButton = (idx) => {
-        return (
-            <button 
-                className="bank-btn"
-                onClick={() => props.onBankClick(idx)}
-            >
-                {"Bank " + (idx + 1)}
-            </button>
         )
     }
 
@@ -72,6 +63,19 @@ function Board(props) {
         return row;
     }
 
+    const renderBankButton = (idx) => {
+        return (
+            <DynamicSquare 
+                value={"Bank " + (idx + 1)}
+                className="bank-btn"
+                isActive={props.bank === idx}
+                onClick={() => props.onBankClick(idx)}
+                buttonColors={props.getButtonColors(idx)}
+                key={"bank" + idx}
+            />
+        )
+    }
+
     const renderBankButtons = () => {
         let row = Array(3).fill(null);
         for(let i = 0; i < 3; i++){
@@ -81,35 +85,39 @@ function Board(props) {
     }
 
     const renderSamplerButtons = () => {
-        let row = Array(2).fill(null);
-        row[0] = (
-            <button 
+        let row = [];
+        row.push(
+            <DynamicSquare 
+                value={"JAMMI"}
                 className="sampler-btn"
+                isActive={"jammi" === props.sampler}
                 onClick={() => props.onSamplerClick("jammi")}
-            >
-                Jammi
-            </button>
+                buttonColors={props.getButtonColors(0)}
+                key={"jammi"}
+            />
         );
-        row[1] = (
-            <button 
+        row.push(
+            <DynamicSquare 
+                value={"CUBBI"}
                 className="sampler-btn"
+                isActive={"cubbi" === props.sampler}
                 onClick={() => props.onSamplerClick("cubbi")}
-            >
-                Cubbi
-            </button>
+                buttonColors={props.getButtonColors(0)}
+                key={"cubbi"}
+            />
         );
         return (row);
     }
   
     return (
         <div className="board">
-            <div className="sampler-btns">
+            <div className="sampler-btn-container">
                 {renderSamplerButtons()}
             </div>
-            <div className="bank-btns">
+            <div className="bank-btn-container">
                 {renderBankButtons()}
             </div>
-            <div className="sample-slots">
+            <div className="sample-slot-container">
                 {renderSampleSlots()}
             </div>
         </div>
@@ -131,9 +139,10 @@ function Chompi(props) {
                     onSampleSlotClick={(i) => handleSampleKeyClick(i)}
                     onBankClick={(i) => setActiveBank(i)}
                     onSamplerClick={(sampler) => setActiveSampler(sampler)}
-                    getButtonColors={()=>getBankColors()}
+                    getButtonColors={(i)=>getBankColors(i)}
                     activeKey={activeKey}
                     bank={activeBank}
+                    sampler={activeSampler}
                 />
                 <label>{currentSample}</label>
             </div>
