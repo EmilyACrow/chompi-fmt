@@ -23,19 +23,17 @@
 
 .board {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     margin: 0 auto;
     width: 100%;
-
+    flex: 1;
 }
 
 ol, ul {
     padding-left: 30px;
 }
 
-.white-key {
+.sample-slot {
     transition: background 0.3s ease-in-out;
     border-radius: 6px;
     float: left;
@@ -48,4 +46,42 @@ ol, ul {
     margin-top: 2px;
     padding: 2;
     text-align: center;
+    user-select: none;
 }
+
+.bank-btn {
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sampler-btn {
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.bank-btns {
+    width: 100%;
+}
+
+.sampler-btns {
+    width: 100%;
+}
+
+.sample-slots {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+}
+

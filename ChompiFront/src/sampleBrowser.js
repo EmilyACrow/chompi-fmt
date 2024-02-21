@@ -82,11 +82,11 @@ function SampleCard(props) {
 }
 
 function SampleBrowser(props) {
-    const {currentSample, setCurrentSample, samples, loadSamples, bank} = props;
+    const {currentSample, onSampleClick, samples, loadSamples, bank} = props;
     const { getBankColors } = props;
 
     const handleSampleClick = (i) => {
-        setCurrentSample(samples[currentSample]);
+        onSampleClick(i);
     };
 
     const handleFileImportClick = (files) => {

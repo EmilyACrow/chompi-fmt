@@ -40,38 +40,44 @@ function Manager() {
     const [activeBank, setActiveBank] = useState(0);
     const [activeKey, setActiveKey] = useState(null);
     const [activeSampler, setActiveSampler] = useState("jammi");
-    const [banks, setBanks] = useState({
-        jammi: Array(3).fill(Array(14).fill("jammi")),
-        cubbi: Array(3).fill(Array(14).fill("cubbi")),
-    });
-    const [bank, setBank] = useState(Array(14).fill(null));
+    const [jammi, setJammi] = useState(Array(3).fill(Array(14).fill("j")));
+    const [cubbi, setCubbi] = useState(Array(3).fill(Array(14).fill("c")));
+    const [bank, setBank] = useState([...jammi[activeBank]]);
     const [currentSample, setCurrentSample] = useState(null);
     const [samples, setSamples] = useState([]);
 
+    /**
+     * Returns a shallow copy of the active sampler banks.
+     * @returns {Array} Shallow copy of the active sampler banks.
+     */
+    const getBanks = (sampler) => { return sampler === "jammi" ? jammi : cubbi; }
+
+    const cloneBank = (sampler, bank) => {
+        return sampler[bank].map((i) => i);
+    }
+
     const handleSetBank = (i) => {
+        if (i === activeBank) return;
+
         setActiveBank(i);
+        setBank(cloneBank(getBanks(activeSampler), i));
+        // toggle the active key off when we change banks
+        handleSetActiveKey(null);
     };
 
     const handleSetActiveKey = (i) => {
-        setActiveKey(i);
+        let val = i === activeKey ? null : i;
+        setActiveKey(val);
+        setCurrentSample(getBanks(activeSampler)[activeBank][val]);
     };
 
     const handleSetSampler = (sampler) => {
+        if (sampler === activeSampler) return;
+
         setActiveSampler(sampler);
+        setBank(cloneBank(getBanks(sampler), activeBank));
+        handleSetActiveKey(null);
     };
-
-    const handleSetCurrentSample = (sample) => {
-        setCurrentSample(sample);
-        if (activeKey) {
-            let updatedBank = [...bank];
-            let updatedBanks = { ...banks };
-            updatedBank[activeKey] = sample;
-            updatedBanks[activeSampler][activeBank] = updatedBank;
-
-            setBank(updatedBank);
-            setBanks(updatedBanks);
-        }
-    }
 
     const handleUploadSamples = (files) => {
         const formData = new FormData();
@@ -82,23 +88,25 @@ function Manager() {
             );
         });
 
-        axios({
-            method: "POST",
-            url: "http://localhost:5000/load-samples",
-            data: formData,
-        })
-        .then((response) => {
-            const data= response.data; //Data is an array of sample names
+        axios.post("http://localhost:5000/load-samples", formData)
+        .then(() => {
+            // Once we've loaded samples, update our sample list
+            axios.get("http://localhost:5000/get-samples")
+                .then((response) => {
+                    const data= response.data; //Data is an array of sample names
 
-            if(Array.isArray(data)) {
-                let loadedSamples = data.filter((sample) => 
-                    (sample.status && sample.status === "success")
-                ).map((sample) => { return sample.filename });
-
-                setSamples([...samples, ...loadedSamples]);
-            } else {
-                console.log("Not an array")
-            }
+                    if(Array.isArray(data)) {
+                        setSamples(data.map((sample) => { return sample.filename }));
+                    } else {
+                        console.log("Not an array")
+                    }
+                }).catch((error) => {
+                    if (error.response) {
+                        console.log(error.response)
+                        console.log(error.response.status)
+                        console.log(error.response.headers)
+                    }
+                });
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response)
@@ -106,6 +114,30 @@ function Manager() {
                 console.log(error.response.headers)
             }
         });
+
+    }
+
+    const handleSampleClick = (sample) => {
+        if (activeKey !== null) {
+            let updatedBank = [...bank];
+            let updatedBanks = {"cubbi": [], "jammi": []};
+            updatedBank[activeKey] = sample;
+            
+            for(let i = 0; i < 3; i++) {
+                if(i === activeBank) {
+                    updatedBanks["cubbi"].push(activeSampler === "cubbi" ? updatedBank : cloneBank(cubbi, i));
+                    updatedBanks["jammi"].push(activeSampler === "jammi" ? updatedBank : cloneBank(jammi, i));
+                } else {
+                    updatedBanks["cubbi"].push(cloneBank(cubbi, i));
+                    updatedBanks["jammi"].push(cloneBank(jammi, i));
+                }
+            }
+
+            setCurrentSample(sample);
+            setBank(updatedBank);
+            setCubbi(updatedBanks["cubbi"]);
+            setJammi(updatedBanks["jammi"]);
+        }
     }
 
     return (
@@ -128,7 +160,7 @@ function Manager() {
                 samples={samples}
                 loadSamples={handleUploadSamples}
                 currentSample={currentSample}
-                setCurrentSample={handleSetCurrentSample}
+                onSampleClick={handleSampleClick}
                 getBankColors={() => getBankColors(activeBank)}
             />
         </div>
