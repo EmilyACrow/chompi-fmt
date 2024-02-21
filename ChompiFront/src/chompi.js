@@ -1,11 +1,11 @@
 import './chompi.css';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 
 function DynamicSquare(props) {
     const {isActive, onClick, value, className} = props;
     const { bankColor, bankHover, activeColor, activeHover } = props.buttonColors;
-    const [isHovered, setIsHovered] = React.useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
         setIsHovered(true);

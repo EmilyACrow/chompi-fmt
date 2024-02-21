@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import './sampleBrowser.css';
 
 
@@ -39,7 +39,7 @@ function FileBrowserButton(props) {
 function SampleCard(props) {
     const {currentSample, onClick, value, bank} = props;
     const { bankColor, bankHover, activeColor, activeHover } = props.buttonColors;
-    const [isHovered, setIsHovered] = React.useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const className = "sample-card";
     const defaultColor = "#fff";
     const defaultHover = "#ddd";

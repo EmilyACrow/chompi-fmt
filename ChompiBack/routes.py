@@ -1,6 +1,7 @@
 from ChompiBack import app
 from ChompiBack.forms import UploadForm
 from werkzeug.utils import secure_filename
+from flask import request
 import os, shutil
 
 @app.route('/')
@@ -35,7 +36,9 @@ def get_samples():
 
 @app.route('/delete-sample', methods=['POST'])
 def delete_sample():
-    filename = request.json['filename']
+    data = request.json
+    filename = data.get('filename')
+    print(data.get('filename'))
     if(os.path.exists(os.path.join( app.instance_path, 'samples', filename))):
         os.remove(os.path.join(
             app.instance_path, 'samples', filename

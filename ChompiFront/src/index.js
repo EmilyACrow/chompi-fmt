@@ -1,4 +1,4 @@
-import React, { StrictMode, useState } from 'react';
+import { StrictMode, useState } from 'react';
 import Chompi from './chompi.js';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -79,6 +79,29 @@ function Manager() {
         handleSetActiveKey(null);
     };
 
+    const catchError = (error) => {
+        if (error.response) {
+            console.log(error.response)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+        }
+    }
+
+    const getSamples = () => {
+        // Once we've loaded samples, update our sample list
+        axios.get("http://localhost:5000/get-samples")
+            .then((response) => {
+                const data= response.data; //Data is an array of sample names
+
+                if(Array.isArray(data)) {
+                    setSamples(data.map((sample) => { return sample.filename }));
+                } else {
+                    console.log("Not an array")
+                }
+            }).catch(error => catchError(error));
+
+    }
+
     const handleUploadSamples = (files) => {
         const formData = new FormData();
 
@@ -89,31 +112,8 @@ function Manager() {
         });
 
         axios.post("http://localhost:5000/load-samples", formData)
-        .then(() => {
-            // Once we've loaded samples, update our sample list
-            axios.get("http://localhost:5000/get-samples")
-                .then((response) => {
-                    const data= response.data; //Data is an array of sample names
-
-                    if(Array.isArray(data)) {
-                        setSamples(data.map((sample) => { return sample.filename }));
-                    } else {
-                        console.log("Not an array")
-                    }
-                }).catch((error) => {
-                    if (error.response) {
-                        console.log(error.response)
-                        console.log(error.response.status)
-                        console.log(error.response.headers)
-                    }
-                });
-        }).catch((error) => {
-            if (error.response) {
-                console.log(error.response)
-                console.log(error.response.status)
-                console.log(error.response.headers)
-            }
-        });
+        .then(getSamples)
+        .catch(error => catchError(error));
 
     }
 
@@ -140,6 +140,20 @@ function Manager() {
         }
     }
 
+    const handleDeleteSample = (sample) => {
+        let data = {"filename": sample};
+
+        axios.post("http://localhost:5000/delete-sample", 
+            JSON.stringify(data),
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        .then(getSamples)
+        .catch(error => catchError(error));
+    }
+
     return (
         <div className="app-container">
             <Chompi
@@ -162,6 +176,7 @@ function Manager() {
                 currentSample={currentSample}
                 onSampleClick={handleSampleClick}
                 getBankColors={() => getBankColors(activeBank)}
+                deleteSample={handleDeleteSample}
             />
         </div>
     );
