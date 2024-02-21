@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/fontawesome-free-regular'
 import './sampleBrowser.css';
 
 
@@ -36,11 +38,11 @@ function FileBrowserButton(props) {
     );
 }
 
-function SampleCard(props) {
-    const {currentSample, onClick, value, bank} = props;
+function NameCard(props) {
+    const {value, onClick, current, bank } = props;
     const { bankColor, bankHover, activeColor, activeHover } = props.buttonColors;
     const [isHovered, setIsHovered] = useState(false);
-    const className = "sample-card";
+    const className = "name-card";
     const defaultColor = "#fff";
     const defaultHover = "#ddd";
 
@@ -54,7 +56,7 @@ function SampleCard(props) {
 
     let divStyle;
 
-    if (value === currentSample) {
+    if (value === current) {
         divStyle = {
             backgroundColor: isHovered ? activeHover : activeColor,
         };
@@ -81,13 +83,48 @@ function SampleCard(props) {
     );
 }
 
+function DeleteCard(props) {
+    return (
+        <div 
+            className="delete-card"
+            onClick={props.onClick}>
+            <FontAwesomeIcon icon={faTrashAlt} />
+        </div>
+    )
+}
+
+function SampleCard(props) {
+    const {currentSample, onSampleClick, onDeleteSampleClick, value, bank} = props;
+    const className = "sample-card";
+
+    return (
+        <div className={className}>
+            <NameCard
+                onClick={onSampleClick}
+                bank={bank}
+                value={value}
+                current={currentSample}
+                buttonColors={props.buttonColors}
+            />
+            <DeleteCard 
+                onClick={onDeleteSampleClick}
+                value={value}
+            />
+        </div>
+    );
+}
+
 function SampleBrowser(props) {
-    const {currentSample, onSampleClick, samples, loadSamples, bank} = props;
+    const {currentSample, onSampleClick, onDeleteSampleClick, samples, loadSamples, bank} = props;
     const { getBankColors } = props;
 
     const handleSampleClick = (i) => {
         onSampleClick(i);
     };
+
+    const handleDeleteSampleClick = (i) => {
+        onDeleteSampleClick(i);
+    }
 
     const handleFileImportClick = (files) => {
         loadSamples([...files]);
@@ -97,7 +134,8 @@ function SampleBrowser(props) {
         return (
             <SampleCard
                 value={i}
-                onClick={() => handleSampleClick(i)}
+                onSampleClick={() => handleSampleClick(i)}
+                onDeleteSampleClick={() => handleDeleteSampleClick(i)}
                 buttonColors={getBankColors()}
                 currentSample={currentSample}
                 bank={bank}

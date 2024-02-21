@@ -5,7 +5,7 @@
 .chompi-container {
     flex: 1;
     margin: 2vw;
-    height: 40vh;
+    height: 20%;
     position: sticky;
     top: 30px;
 }

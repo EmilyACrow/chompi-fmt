@@ -176,7 +176,7 @@ function Manager() {
                 currentSample={currentSample}
                 onSampleClick={handleSampleClick}
                 getBankColors={() => getBankColors(activeBank)}
-                deleteSample={handleDeleteSample}
+                onDeleteSampleClick={handleDeleteSample}
             />
         </div>
     );
