@@ -1,4 +1,5 @@
 from ChompiBack import app
+from ChompiBack.export import export
 from ChompiBack.forms import UploadForm
 #from .export import export
 from werkzeug.utils import secure_filename
@@ -37,9 +38,9 @@ def get_samples():
         })
     return response
 
-# @app.route('/export-samples', methods=['POST'])
-# def export_samples():
-#     return export(request)
+@app.route('/export', methods=['POST'])
+def export_samples():
+    return export(request)
 
 @app.route('/delete-sample', methods=['POST'])
 def delete_sample():
@@ -73,17 +74,3 @@ def delete_all_samples():
     return {
         "status": "success"
     }
-
-@app.route('/test', methods=['GET'])
-def test():
-    root = tk.Tk()
-    root.attributes('-topmost', True)
-    root.attributes('-alpha', 0)
-    export_path = filedialog.askdirectory(initialdir='~/')
-    
-    root.withdraw()
-    root.destroy()
-
-    return {
-        "status": "success",
-        "msg": export_path}

@@ -90,3 +90,11 @@ ol, ul {
     flex: 1;
 }
 
+.export-btn {
+    border-radius: 5px;
+    width: 25%;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    margin: 5px;
+}

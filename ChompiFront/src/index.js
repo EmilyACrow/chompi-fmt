@@ -40,8 +40,8 @@ function Manager() {
     const [activeBank, setActiveBank] = useState(0);
     const [activeKey, setActiveKey] = useState(null);
     const [activeSampler, setActiveSampler] = useState("jammi");
-    const [jammi, setJammi] = useState(Array(3).fill(Array(14).fill("j")));
-    const [cubbi, setCubbi] = useState(Array(3).fill(Array(14).fill("c")));
+    const [jammi, setJammi] = useState(Array(3).fill(Array(14).fill(null)));
+    const [cubbi, setCubbi] = useState(Array(3).fill(Array(14).fill(null)));
     const [bank, setBank] = useState([...jammi[activeBank]]);
     const [currentSample, setCurrentSample] = useState(null);
     const [samples, setSamples] = useState([]);
@@ -51,6 +51,31 @@ function Manager() {
      * @returns {Array} Shallow copy of the active sampler banks.
      */
     const getBanks = (sampler) => { return sampler === "jammi" ? jammi : cubbi; }
+
+    /**
+     * Returns a JSON string of the current chompi state.
+     * @returns {String} JSON string of current chompi state
+     */
+    const formatExportData = () => {
+        let data = {"samples": []};
+        for(let bank = 0; bank < 3; bank++) {
+            for (let slot = 0; slot < 14; slot++) {
+                if(jammi[bank][slot] != null) {
+                    data.samples.push({'filename' : jammi[bank][slot],
+                                        'sampler' : 'jammi',
+                                        'bank' : bank,
+                                        'slot' : slot + 1});
+                }
+                if(cubbi[bank][slot] != null) {
+                    data.samples.push({'filename' : cubbi[bank][slot],
+                                        'sampler' : 'cubbi',
+                                        'bank' : bank,
+                                        'slot' : slot + 1});
+                }
+            }
+        }
+        return JSON.stringify(data);
+    }
 
     const cloneBank = (sampler, bank) => {
         return sampler[bank].map((i) => i);
@@ -154,6 +179,21 @@ function Manager() {
         .catch(error => catchError(error));
     }
 
+    const handleExport = () => {
+        let data = formatExportData();
+        axios.post("http://localhost:5000/export", 
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch(error => catchError(error));
+    }
+
     return (
         <div className="app-container">
             <Chompi
@@ -166,6 +206,7 @@ function Manager() {
                 setActiveSampler={handleSetSampler}
                 currentSample={currentSample}
                 getBankColors={getBankColors}
+                handleExport={handleExport}
             />
             <SampleBrowser
                 className="browser"

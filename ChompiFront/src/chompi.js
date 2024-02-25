@@ -123,10 +123,21 @@ function Board(props) {
         </div>
     );
 }
+
+function ExportBtn(props) {
+    return (
+        <DynamicSquare
+            value={"Export"}
+            className="export-btn"
+            onClick={props.handleExport()}
+            buttonColors={props.getButtonColors()}
+        />
+    )
+}
   
 function Chompi(props) {
     const {activeKey, setActiveKey, activeBank, setActiveBank, activeSampler, setActiveSampler} = props;
-    const {getBankColors, currentSample} = props;
+    const {getBankColors, handleExport, currentSample} = props;
 
     const handleSampleKeyClick = (i) => {
         setActiveKey(i);
@@ -146,7 +157,10 @@ function Chompi(props) {
                 />
                 <label>{currentSample}</label>
             </div>
-            <input type="file" webkitdirectory directory onChange={(e) => console.log(e)}/>
+            <ExportBtn 
+                getButtonColors={()=>getBankColors(0)}
+                handleExport={()=>handleExport}
+            />
         </div>
     );
 }

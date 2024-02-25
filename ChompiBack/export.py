@@ -5,8 +5,7 @@ from tkinter import filedialog;
 from pathlib import Path
 
 ## Export JSON format
-    # Samples
-        # Sample
+        # Samples
             # filename
             # sampler
             # bank
@@ -20,7 +19,7 @@ def export(request):
     root.attributes('-topmost', True)
     root.attributes('-alpha', 0)
     
-    export_path = filedialog.askdirectory(initialdir='~/')
+    export_path = filedialog.askdirectory(initialdir='~/Downloads', title='Select export directory')
     
     root.withdraw()
     root.destroy()
@@ -41,28 +40,40 @@ def export(request):
         except OSError as e:
             return {
                 "status": "error",
-                "msg": e
+                "msg": "Could not overwrite backup directory"
             }
         
     # If the directory is not safe to overwrite, make sure the target directory at least exists then prep it
     if not safe_to_overwrite:
-        try:
-            os.makedirs(export_path, exist_ok=True)
-        except OSError as e:
-            return {
-                "status": "error",
-                "msg": e
-            }
-        
-        # If the directory is not empty, create a subdirectory called 'chompi'
-        if len(os.listdir(export_path)) != 0:
+        if not os.path.exists(export_path):
             try:
-                export_path = os.path.join(export_path, 'chompi')
                 os.makedirs(export_path)
             except OSError as e:
                 return {
                     "status": "error",
-                    "msg": e
+                    "msg": "Could not create directory " + export_path
+                }
+        
+        # If the directory is not empty, create a subdirectory called 'chompi'
+        else: 
+            try:
+                if os.path.exists(os.path.join(export_path, 'chompi')):
+                    i = 1
+                    while os.path.exists(os.path.join(export_path, f'chompi ({i})')):
+                        i = i + 1
+                        if i > 100:
+                            return {
+                                "status": "error",
+                                "msg": "Could not create directory " + export_path
+                            }
+                    export_path = os.path.join(export_path, f'chompi ({i})')
+                else:
+                    export_path = os.path.join(os.path.abspath(export_path), 'chompi')
+                os.makedirs(export_path)
+            except OSError as e:
+                return {
+                    "status": "error",
+                    "msg": "Could not create directory " + export_path
                 }
     
     return export_samples(samples, export_path)
@@ -106,13 +117,22 @@ def clear_export_dir(path):
 # Export samples to the export path. Returns a list of errors
 def export_samples(samples, export_path):
     sample_path = os.path.join(app.instance_path, 'samples')
-    errors: []
+    errors = []
 
     for sample in samples:
         filename = sample.get('filename')
         sampler = sample.get('sampler')
         bank = sample.get('bank')
         slot = sample.get('slot')
+
+        if not os.path.isfile(os.path.join(sample_path, filename)):
+            errors.append({
+                "filename": filename,
+                "status": "error",
+                "msg": "File does not exist",
+                "path": os.path.join(sample_path, filename)
+            })
+            continue
 
         # Format filename
         bank_letter = chr(bank + 97) # Convert bank number to letters a,b, or c
@@ -128,6 +148,6 @@ def export_samples(samples, export_path):
             errors.append({
                 "filename": filename,
                 "status": "error",
-                "msg": e
+                "msg": "Could not copy file"
             })
     return errors

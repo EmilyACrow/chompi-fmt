@@ -6,6 +6,3 @@ wtforms_json.init()
 
 class UploadForm(FlaskForm):
     samples = MultipleFileField()
-
-class ExportForm(FlaskForm):
-    export_path = FileField()
