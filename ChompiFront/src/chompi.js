@@ -146,6 +146,7 @@ function Chompi(props) {
                 />
                 <label>{currentSample}</label>
             </div>
+            <input type="file" webkitdirectory directory onChange={(e) => console.log(e)}/>
         </div>
     );
 }

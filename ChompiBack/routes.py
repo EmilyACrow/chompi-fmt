@@ -1,8 +1,11 @@
 from ChompiBack import app
 from ChompiBack.forms import UploadForm
+#from .export import export
 from werkzeug.utils import secure_filename
 from flask import request
 import os, shutil
+import tkinter as tk;
+from tkinter import filedialog;
 
 @app.route('/')
 @app.route('/index')
@@ -33,6 +36,10 @@ def get_samples():
             "filename": filename
         })
     return response
+
+# @app.route('/export-samples', methods=['POST'])
+# def export_samples():
+#     return export(request)
 
 @app.route('/delete-sample', methods=['POST'])
 def delete_sample():
@@ -66,3 +73,17 @@ def delete_all_samples():
     return {
         "status": "success"
     }
+
+@app.route('/test', methods=['GET'])
+def test():
+    root = tk.Tk()
+    root.attributes('-topmost', True)
+    root.attributes('-alpha', 0)
+    export_path = filedialog.askdirectory(initialdir='~/')
+    
+    root.withdraw()
+    root.destroy()
+
+    return {
+        "status": "success",
+        "msg": export_path}
