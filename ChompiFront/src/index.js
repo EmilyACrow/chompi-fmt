@@ -194,6 +194,24 @@ function Manager() {
         .catch(error => catchError(error));
     }
 
+    const handleImport = () => {
+        axios.get("http://localhost:5000/import")
+        .then((response) => {
+            const data = response.data;
+            if(data) {
+                let updatedBanks = {"cubbi": [], "jammi": []};
+                let bank, slot, sampler, filename;
+                data.samples.forEach((sample) => {
+                    bank = sample.bank;
+                    slot = sample.slot - 1;
+                    sampler = sample.sampler;
+                    filename = sample.filename;
+                });
+            }
+        })
+        .catch(error => catchError(error));
+    }
+
     return (
         <div className="app-container">
             <Chompi
@@ -207,6 +225,7 @@ function Manager() {
                 currentSample={currentSample}
                 getBankColors={getBankColors}
                 handleExport={handleExport}
+                handleImport={handleImport}
             />
             <SampleBrowser
                 className="browser"

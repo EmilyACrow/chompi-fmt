@@ -4,6 +4,11 @@ body {
     height: 100%;
 }
 
+body, html { 
+    font-family: 'Lato';
+    src: local('Lato'), url(./fonts/Lato-Regular.ttf) format('ttf');
+}
+
 .app-container {
     display: flex;
 }

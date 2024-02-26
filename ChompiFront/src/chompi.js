@@ -40,6 +40,14 @@ function DynamicSquare(props) {
     );
 }
 
+function SampleDisplay(props) {
+    return (
+        <div 
+            className="sample-display"
+        > {props.value} </div>
+    )
+}
+
 function Board(props) {
     const buttonColors = props.getButtonColors(props.bank);
     const renderSampleSlot = (idx) => {
@@ -66,7 +74,7 @@ function Board(props) {
     const renderBankButton = (idx) => {
         return (
             <DynamicSquare 
-                value={"Bank " + (idx + 1)}
+                value={"Bank " + String.fromCharCode(65 + idx)}
                 className="bank-btn"
                 isActive={props.bank === idx}
                 onClick={() => props.onBankClick(idx)}
@@ -123,21 +131,10 @@ function Board(props) {
         </div>
     );
 }
-
-function ExportBtn(props) {
-    return (
-        <DynamicSquare
-            value={"Export"}
-            className="export-btn"
-            onClick={props.handleExport()}
-            buttonColors={props.getButtonColors()}
-        />
-    )
-}
   
 function Chompi(props) {
     const {activeKey, setActiveKey, activeBank, setActiveBank, activeSampler, setActiveSampler} = props;
-    const {getBankColors, handleExport, currentSample} = props;
+    const {getBankColors, handleExport, handleImport, currentSample} = props;
 
     const handleSampleKeyClick = (i) => {
         setActiveKey(i);
@@ -155,12 +152,24 @@ function Chompi(props) {
                     bank={activeBank}
                     sampler={activeSampler}
                 />
-                <label>{currentSample}</label>
+                <SampleDisplay value={currentSample} />
             </div>
-            <ExportBtn 
-                getButtonColors={()=>getBankColors(0)}
-                handleExport={()=>handleExport}
+            <div className="import-export-container">
+                <DynamicSquare
+                    value={"IMPORT"}
+                    className="import-export-btn"
+                    onClick={()=>handleImport()}
+                    buttonColors={getBankColors(0)}
+                />                
+                <div style={{flex: 1}}/>
+                <DynamicSquare
+                value={"EXPORT"}
+                className="import-export-btn"
+                onClick={()=>handleExport()}
+                buttonColors={getBankColors(0)}
             />
+            </div>
+
         </div>
     );
 }

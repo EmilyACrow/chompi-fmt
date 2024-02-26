@@ -14,10 +14,8 @@
     font-size: 1.5em;
     text-align: center;
     padding: 1em;
-    border: 1px solid #000;
     border-radius: 5px;
     background-color: #cac;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     height: 100%;
 }
 
@@ -47,25 +45,25 @@ ol, ul {
     padding: 2;
     text-align: center;
     user-select: none;
+    cursor: pointer;
 }
 
 .bank-btn {
     border-radius: 5px;
     padding: 5px;
     margin: 5px;
-    width: 18%;
     cursor: pointer;
     user-select: none;
     flex: 1,
 }
 
 .sampler-btn {
-    background-color: #f4f4f4;
     border-radius: 5px;
     padding: 5px;
     margin: 5px;
     cursor: pointer;
     user-select: none;
+    flex: 1;
 }
 
 .bank-btn-container {
@@ -90,11 +88,38 @@ ol, ul {
     flex: 1;
 }
 
-.export-btn {
+.import-export-btn {
     border-radius: 5px;
     width: 25%;
     height: 50px;
     text-align: center;
     line-height: 50px;
-    margin: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-family: 'Lato';
+    font-size: 30px;
+    src: local('Lato'), url(./fonts/Lato-Bold.ttf) format('ttf');
+    flex: 1;
+    user-select: none;
+}
+
+.import-export-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.sample-display {
+    width: 60%;
+    height: 50px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+    background: #333;
+    color: #ddd;
+    line-height: 50px;
+    text-align: center; 
 }
