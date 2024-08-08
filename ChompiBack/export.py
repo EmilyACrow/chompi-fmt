@@ -15,6 +15,7 @@ def export(request):
     data = request.json
     samples = data.get('samples')
 
+    # Using TK to get a file explorer for import
     root = tk.Tk()
     root.attributes('-topmost', True)
     root.attributes('-alpha', 0)
