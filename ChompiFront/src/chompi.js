@@ -1,6 +1,7 @@
+// Create the chompi visualizer
+
 import './chompi.css';
 import { useState } from 'react';
-
 
 function DynamicSquare(props) {
     const {isActive, onClick, value, className} = props;

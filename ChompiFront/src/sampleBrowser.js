@@ -1,3 +1,5 @@
+// Create and handle the sample browser
+
 import { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/fontawesome-free-regular'

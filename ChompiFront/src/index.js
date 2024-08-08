@@ -1,3 +1,6 @@
+// Manage the overall state of the app and communicate between the 
+// chompi visualizer, the sample browser, and the backend.
+
 import { StrictMode, useState } from 'react';
 import Chompi from './chompi.js';
 import ReactDOM from 'react-dom/client';
