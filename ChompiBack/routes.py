@@ -9,7 +9,6 @@ import tkinter as tk;
 from tkinter import filedialog;
 
 @app.route('/')
-@app.route('/index')
 def index():
     return app.send_static_file('index.html')
 
