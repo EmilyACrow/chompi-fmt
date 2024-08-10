@@ -11,7 +11,7 @@ from tkinter import filedialog;
 @app.route('/')
 @app.route('/index')
 def index():
-    return "Hello, World!"
+    return app.send_static_file('index.html')
 
 @app.route('/load-samples', methods=['POST'])
 def load_samples():

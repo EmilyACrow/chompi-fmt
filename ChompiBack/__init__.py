@@ -3,7 +3,7 @@ from config import Config
 from flask_cors import CORS
 import os, shutil
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../ChompiFront/build', static_url_path='/')
 CORS(app, supports_credentials=True)
 app.config.from_object(Config)
 
