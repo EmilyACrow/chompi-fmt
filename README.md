@@ -17,12 +17,12 @@ This project uses Node, Flask, and Python.
 
 ## Initialize the backend
 
-From the root folder, run `python -m flask`
+From the root folder, actiavte venv and run `python -m flask run`
 
 
 ## Initialize the frontend
 
-From a new terminal, run `npm start` in the root folder.
+From a new terminal, run `npm start` in the ChompiFront folder.
 
 
 ## Open the app
